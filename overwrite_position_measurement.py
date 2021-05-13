@@ -1,16 +1,23 @@
 #!/usr/bin/env python
 
+"""
+usage: overwrite_position_measurement.py -B [batch] -b [board] [file]
+read a position measurement line from csv file,
+and overwrite the database with that batch and board id
+will fail if that board doesn't already have position measurements in the database
+(use upload in that case)
+"""
+
+
 import json
 import requests
 import os
 import csv
-import re
 import sys
 import datetime
 
-pattern = re.compile(r'[^a-zA-Z0-9]+')
-def camelcase(s):
-    return pattern.sub('',s.title())
+from sietch_config import board_component_name
+from camelcase import camelcase
 
 def upload(target_batch, target_board, measurement_file):
 
@@ -70,7 +77,7 @@ def upload(target_batch, target_board, measurement_file):
                     'data.batchId':batch,
                     'data.boardId':board,
                     }
-            r = requests.post(baseurl+'/api/search/component/UK%20Board',json=search_payload,headers=header)
+            r = requests.post(baseurl+'/api/search/component/'+board_component_name,json=search_payload,headers=header)
 
             if not r:
                 raise Exception(r.text)

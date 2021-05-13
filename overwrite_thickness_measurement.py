@@ -1,8 +1,19 @@
 #!/usr/bin/env python
 
+"""
+usage: overwrite_thickness_measurement.py -B [batch] -b [board] [file]
+read a thickness measurement csv file,
+and overwrite the database with that batch and board id and position label
+will fail if that board doesn't already have this position measurement in the database
+(use upload in that case)
+"""
+
+
 import json
 import requests
 import os
+
+from sietch_config import board_component_name
 
 def upload(batch, board, measurement_file):
 
@@ -32,7 +43,7 @@ def upload(batch, board, measurement_file):
         'data.boardId':board,
         }
 
-    r = requests.post(baseurl+'/api/search/component/UK%20Board',json=payload,headers=header)
+    r = requests.post(baseurl+'/api/search/component/'+board_component_name,json=payload,headers=header)
 
     if not r:
         raise Exception(r.text)

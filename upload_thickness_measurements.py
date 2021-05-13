@@ -1,8 +1,18 @@
 #!/usr/bin/env python
 
+"""
+usage: upload_position_measurements.py -B [batch] -b [board] [list of files]
+read thickness measurements from csv files,
+and upload to the database.
+Will fail if the board doesn't exist in the database.
+Will not overwrite existing measurements.
+"""
+
 import json
 import requests
 import os
+
+from sietch_config import board_component_name
 
 def upload(batch, board, list_of_measurement_files):
 
@@ -32,7 +42,7 @@ def upload(batch, board, list_of_measurement_files):
         'data.boardId':board,
         }
 
-    r = requests.post(baseurl+'/api/search/component/UK%20Board',json=payload,headers=header)
+    r = requests.post(baseurl+'/api/search/component/'+board_component_name,json=payload,headers=header)
 
     if not r:
         raise Exception(r.text)

@@ -1,16 +1,22 @@
 #!/usr/bin/env python
 
+"""
+usage: upload_position_measurements.py [list of files]
+read position measurement lines from csv files,
+and upload to the database
+will fail if those boards do not exist in the database, or already have position measurements
+"""
+
+
 import json
 import requests
 import os
 import csv
-import re
 import sys
 import datetime
 
-pattern = re.compile(r'[^a-zA-Z0-9]+')
-def camelcase(s):
-    return pattern.sub('',s.title())
+from sietch_config import board_component_name
+from camelcase import camelcase
 
 def upload(list_of_measurement_files):
 
@@ -68,7 +74,7 @@ def upload(list_of_measurement_files):
                     'data.batchId':batch,
                     'data.boardId':board,
                     }
-            r = requests.post(baseurl+'/api/search/component/UK%20Board',json=search_payload,headers=header)
+            r = requests.post(baseurl+'/api/search/component/'+board_component_name,json=search_payload,headers=header)
 
             if not r:
                 raise Exception(r.text)
